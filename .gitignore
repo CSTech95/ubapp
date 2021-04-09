@@ -1,3 +1,6 @@
 # https://youtu.be/-MXPvBhSArM
 
+# Ignore Node Modules
+node_modules/
+
 # Ignore DB Configurations
