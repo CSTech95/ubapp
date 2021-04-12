@@ -13,3 +13,28 @@
 -- think about slightly complex scenarios on your database 
 -- schema and have you write queries involving join, aggregation 
 -- and nesting that you have learned in the class.
+SELECT STUDENT.fName,
+    DEPENDENT.fName,
+    DEPENDENT.relationshipName
+FROM STUDENT
+    INNER JOIN DEPENDENT ON STUDENT.ID = DEPENDENT.ID;
+--
+SELECT *
+FROM COURSE_PLANNER
+WHERE isApproved = 0;
+GROUP BY year desc;
+--
+SELECT STUDENT.fName,
+    COMPLETED_COURSE.courseName,
+    COMPLETED_COURSE.grade
+FROM STUDENT,
+    COMPLETED_COURSE
+WHERE STUDENT.ID = COMPLETED_COURSE.ID
+ORDER BY STUDENT.fName;
+--
+SELECT *
+FROM STUDENT
+WHERE STUDENT.isGrad = 1;
+--
+SELECT *
+FROM COURSE;
