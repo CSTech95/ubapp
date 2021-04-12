@@ -5,13 +5,13 @@
 -- application to check the correctness of your queries. 
 -- You should be able to clean everything through this 
 -- script and re-create the database instance.
-DROP TABLE USER;
 DROP TABLE `ADMIN`;
 DROP TABLE COURSE;
 DROP TABLE ADVISOR;
-DROP TABLE STUDENT;
 DROP TABLE `DEPENDENT`;
+DROP TABLE STUDENT;
 -- STUDENT'S COMPLETED COURSES
-DROP TABLE C_COURSES;
+DROP TABLE COMPLETED_COURSE;
 -- STUDENT'S COURSE PLANNER
-DROP TABLE SC_PLANNER;
+DROP TABLE COURSE_PLANNER;
+DROP TABLE USER;

@@ -7,6 +7,9 @@
 -- have at least 8 tables. Make sure you have at 
 -- least 2 database objects among trigger, function, 
 -- procedure or view.
+--
+-- CREATE EACH TABLE SEPARATELY INSTEAD OF ALL AT ONCE
+--
 -- USER Table
 CREATE TABLE USER(
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -19,53 +22,103 @@ CREATE TABLE USER(
     `address` INT,
     city INT,
     `state` INT,
-    zipcode INT
-) -- ADMIN Table
+    zipCode INT
+);
+-- ADMIN Table
 CREATE TABLE `ADMIN`(
-    adminId INT AUTO_INCREMENT PRIMARY KEY,
-    FOREIGN KEY (id) REFERENCES USER (id),
-    `level` VARCHAR(20) NOT NULL
-) -- COURSE Table
+    adminId INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    id INT,
+    -- FOREIGN KEY --
+    CONSTRAINT fkAdminUserId FOREIGN KEY (id) REFERENCES USER (id) ON DELETE
+    SET NULL ON UPDATE
+    SET NULL,
+        `level` VARCHAR(20) NOT NULL
+);
+-- COURSE Table
 CREATE TABLE COURSE(
-    courseId INT AUTO_INCREMENT PRIMARY KEY colName VARCHAR(155) NOT NULL,
+    courseId INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     courseName VARCHAR(100) NOT NULL,
     `subject` VARCHAR(255) NOT NULL
-) -- ADVISOR Table
+);
+-- ADVISOR Table
 CREATE TABLE ADVISOR(
     advisorId INT AUTO_INCREMENT PRIMARY KEY,
-    `Subject` VARCHAR(255) NOT NULL FOREIGN KEY (id) REFERENCES USER (id)
-) -- STUDENT Table
+    id INT,
+    -- FOREIGN KEY --
+    CONSTRAINT fkAdvisorUserId FOREIGN KEY (id) REFERENCES USER (id) ON DELETE
+    SET NULL ON UPDATE
+    SET NULL,
+        `Subject` VARCHAR(255) NOT NULL
+);
+-- STUDENT Table
 CREATE TABLE STUDENT(
     studentId INT AUTO_INCREMENT PRIMARY KEY,
-    FOREIGN KEY (id) REFERENCES USER (id) isUndergrad TINYINT,
-    isGrad TINYINT,
-    isApproved TINYINT,
-) -- DEPENDENT Table
+    id INT,
+    -- FOREIGN KEY --
+    CONSTRAINT fkStudentUserId FOREIGN KEY (id) REFERENCES USER (id) ON DELETE
+    SET NULL ON UPDATE
+    SET NULL,
+        isGrad TINYINT,
+        isApproved TINYINT
+);
+--
+-- IF YOU COPIED AND PASTE YOU MAY HAVE TO RECOPY FROM `DEPENDENT TABLE TO END
+-- DEPENDENT Table
 CREATE TABLE `DEPENDENT`(
-    FOREIGN KEY (id) REFERENCES USER (id) relType VARCHAR(100) NOT NULL
-) -- STUDENT's Completed Courses
+    id INT,
+    -- FOREIGN KEY --
+    CONSTRAINT fkDependentUserId FOREIGN KEY (id) REFERENCES STUDENT (id) ON DELETE
+    SET NULL ON UPDATE
+    SET NULL
+);
+-- STUDENT's Completed Courses
 CREATE TABLE COMPLETED_COURSE(
-    FOREIGN KEY (id) REFERENCES USER (id) courseName VARCHAR(100) NOT NULL
-) -- STUDENT'S Course Planner Table
+    courseName VARCHAR(100) NOT NULL,
+    courseId INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    id INT,
+    -- FOREIGN KEY --
+    CONSTRAINT fkCOMPLETED_COURSEUserId FOREIGN KEY (id) REFERENCES USER (id) ON DELETE
+    SET NULL ON UPDATE
+    SET NULL,
+        grade VARCHAR(5) NOT NULL
+);
+-- STUDENT'S Course Planner Table
 CREATE TABLE COURSE_PLANNER(
-    -- TODO !!!!🔥🔥🔥🔥🔥🔥🔥
-    FOREIGN KEY (id) REFERENCES USER (id) courseName VARCHAR(100) NOT NULL
-) -- Store Trigger Info
+    id INT,
+    -- FOREIGN KEY --
+    CONSTRAINT fkCOURSE_PLANNERUserId FOREIGN KEY (id) REFERENCES USER (id) ON DELETE
+    SET NULL ON UPDATE
+    SET NULL,
+        courseName VARCHAR(100) NOT NULL,
+        courseID INT,
+        year VARCHAR(100) NOT NULL,
+        isApproved TINYINT
+);
+------
+-- Trigger
+-- &
+-- Views
+-- onwards
+-- Store Trigger Info
+--------
 CREATE TABLE PLANNER_ACTIVITY (
     studentId INT AUTO_INCREMENT PRIMARY KEY,
-    -- FOREIGN KEY (id) REFERENCES USER (id) isUndergrad TINYINT,
+    id INT,
+    -- FOREIGN KEY --
+    CONSTRAINT fkPLANNER_ACTIVITYUserId FOREIGN KEY (id) REFERENCES STUDENT (id),
     courseID INT,
+    courseName VARCHAR(100) NOT NULL,
     dateOfActivity DATETIME DEFAULT NULL,
     action VARCHAR(50) DEFAULT NULL
 );
 -- After an entry in the COURSE_PLANNER TABLE
 -- Test if this trigger works🤯🤯🤯🤯🤯🤯
-CREATE TRIGGER before_planner_entry
+CREATE TRIGGER after_planner_entry
 AFTER
 INSERT ON COURSE_PLANNER FOR EACH ROW
 INSERT INTO PLANNER_ACTIVITY
 SET action = 'INSERT',
-    studentId = OLD.studentId,
-    courseID = OLD.lastncourseIDame,
-    courseName VARCHAR(100) NOT NULL,
+    studentId = studentId,
+    courseID = courseID,
+    courseName = courseName,
     dateOfActivity = NOW();
