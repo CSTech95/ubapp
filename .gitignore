@@ -3,4 +3,4 @@
 # Ignore Node Modules
 node_modules/
 
-# Ignore DB Configurations
+.env
