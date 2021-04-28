@@ -3,6 +3,7 @@
 // https://cloud.google.com/appengine/docs/standard/nodejs/building-app/writing-web-service
 
 const express = require('express');
+const app = express();
 const mysql = require('mysql');
 
 require('dotenv').config();
@@ -22,14 +23,14 @@ db.connect((err) => {
   }
   console.log('MySql Connected...');
 });
-const app = express();
 
 app.get('/', (req, res) => {
   res.send('Hello from App Engine!');
 });
 
-app.get(`/addcourse1`, (req, res) => {
-  let course = { courseId: 1, courseName: `Art 101`, subject: `Art` };
+// Routes for courses
+app.get(`/addcourse`, (req, res) => {
+  let course = { courseId: 5, courseName: `Art 105`, subject: `Art` };
   let sql = `INSERT INTO COURSE SET ?`;
   let query = db.query(sql, course, (err, result) => {
     if (err) throw err;
@@ -37,6 +38,7 @@ app.get(`/addcourse1`, (req, res) => {
     res.send(`course added…`);
   });
 });
+// End of routes for courses
 
 // Listen to the App Engine-specified port, or 8080 otherwise
 const PORT = process.env.PORT || 8080;
