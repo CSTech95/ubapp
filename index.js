@@ -5,7 +5,18 @@
 const express = require('express');
 const app = express();
 const mysql = require('mysql');
+const cors = require('cors');
 
+app.use(cors());
+app.use(express.json());
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'localhost:8080/addcourse'); // update to match the domain you will make the request from
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  );
+  next();
+});
 const db = require('./db');
 
 // Connect
@@ -22,15 +33,33 @@ app.get('/', (req, res) => {
 
 // Routes for courses
 
+// // Add a course
+// app.get(`/addcourse`, (req, res) => {
+//   let course = { courseName: `Algebra 20`, subject: `Math` };
+//   let sql = `INSERT INTO COURSE SET ?`;
+//   let query = db.query(sql, course, (err, result) => {
+//     if (err) throw err;
+//     console.log(result);
+//     res.send(`course added…`);
+//   });
+// });
+
 // Add a course
-app.get(`/addcourse`, (req, res) => {
-  let course = { courseName: `Algebra 2`, subject: `Math` };
-  let sql = `INSERT INTO COURSE SET ?`;
-  let query = db.query(sql, course, (err, result) => {
-    if (err) throw err;
-    console.log(result);
-    res.send(`course added…`);
-  });
+app.post('/addcourse', (req, res) => {
+  const courseName = req.body.courseName;
+  const subject = req.body.subject;
+
+  db.query(
+    'INSERT INTO COURSE (courseName, subject) VALUES (?,?)',
+    [courseName, subject],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send('values inserted');
+      }
+    }
+  );
 });
 
 // Get courses
@@ -70,3 +99,7 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
 });
+
+// creating routes on express server
+// https://youtu.be/re3OIOr9dJI?t=1958
+// time starts at 32:38
